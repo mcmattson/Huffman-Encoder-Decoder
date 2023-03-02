@@ -96,27 +96,16 @@ Do not print anything from your code or the test may fail.
 
 
 def main():
-    # filename = input('filename?')
-    # with open(filename, 'r') as file:
-    #     original = file.read()
-    original = 'sustaining'
+    filename = input('filename?')
+    with open(filename, 'r') as file:
+        original = file.read()
     frequency = count_frequency(original)
-    print("Step 1: ", frequency)
-
     tree = create_tree(frequency)
-    print("Step 2: ", tree)
-
     coding = create_coding(tree)
-    print("Step 3: ", coding)
-
     code = encode_text(original, coding)
-    print("Step 4: ", code)
-
     text = decode_text(code, coding)
-    print("Step 5: ", text)
-
-    # print('original matches decoded text:', original == text and len(original) == len(text))
-    # print('compression ratio in bits is ', len(code), '/', 8 * len(original), '=', len(code) / (8 * len(original)))
+    print('original matches decoded text:', original == text and len(original) == len(text))
+    print('compression ratio in bits is ', len(code), '/', 8 * len(original), '=', len(code) / (8 * len(original)))
     return
 
 
@@ -174,6 +163,12 @@ You will need to traverse the tree recursively to visit all of the nodes while m
 When you find a node with a letter, you can add it to the dictionary along with the current bit pattern.
 '''
 
+'''helper function to determine if at the tree leaf or not'''
+
+
+def is_leaf(tree):
+    return tree.left is None and tree.right is None
+
 
 def create_coding(tree):
     coding = {}
@@ -181,10 +176,10 @@ def create_coding(tree):
     return coding
 
 
-def huffman_table(tree, binStr, coding):
-    def is_leaf(tree):
-        return tree.left is None and tree.right is None
+'''helper function to build the table'''
 
+
+def huffman_table(tree, binStr, coding):
     if is_leaf(tree):
         coding[tree.char] = binStr
         return
@@ -216,29 +211,27 @@ The result is a single string that should match the original.
 '''
 
 
-def is_leaf_char(coding):
-    return coding.left.char is None and coding.right.char is None
-
-
 def decode_text(text, coding):
     decode = ''
+
     # insert your code here
-    #output = []
-    #curr = coding
-    # for i in text:
-    #     if i == '1':
-    #         #curr = curr.right
-    #         print('1', end='')
-    #     elif i == '0':
-    #         #curr = curr.left
-    #         print('0', end='')
-    #     if is_leaf_char(curr):
-    #         #decode += curr.char
-    #         #curr = coding
-    #         print(coding[curr.char])
-    #
-    # decode = output
-    #decode = ''.join([str(item) for item in output])
+    '''helper function to return value from the matching key in coding dictionary'''
+
+    def get_value(keyVal):
+        for value, key in coding.items():
+            if keyVal == key:
+                return value
+
+    decodeStr = ''
+    for ch in text:
+        decodeStr += ch
+        for key in coding:
+            key = coding[key]
+
+            '''match key to decoded string and build string with value returned'''
+            if decodeStr == key:
+                decode += get_value(key)
+                decodeStr = ''
     return decode
 
 
