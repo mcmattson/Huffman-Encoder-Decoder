@@ -2,6 +2,7 @@ from queue import PriorityQueue
 from dataclasses import dataclass, field
 from typing import Any
 from itertools import count
+import time
 
 '''
 Students will implement a variable-length encoding scheme in this assignment to encode and decode text sequences using 
@@ -92,18 +93,52 @@ Have fun!
 This is not how we will test your code. 
 We will call the functions you write directly from our code.
 Do not print anything from your code or the test may fail.
+
+eye2eye
 '''
 
-
+timerData = {}
 def main():
     filename = input('filename?')
     with open(filename, 'r') as file:
         original = file.read()
+    start_overall = time.perf_counter()
+
+    start_count_frequency = time.perf_counter()
     frequency = count_frequency(original)
+    finish_count_frequency = time.perf_counter()
+    timeTaken = finish_count_frequency - start_count_frequency
+    timerData['Count Frequency'] = timeTaken
+
+    start_create_tree = time.perf_counter()
     tree = create_tree(frequency)
+    finish_create_tree = time.perf_counter()
+    timeTaken = finish_create_tree - start_create_tree
+    timerData['Create Tree'] = timeTaken
+
+    start_create_coding = time.perf_counter()
     coding = create_coding(tree)
+    finish_create_coding = time.perf_counter()
+    timeTaken = finish_create_coding - start_create_coding
+    timerData['Create Coding'] = timeTaken
+
+    start_encode_text = time.perf_counter()
     code = encode_text(original, coding)
+    finish_encode_text = time.perf_counter()
+    timeTaken = finish_encode_text - start_encode_text
+    timerData['Encode Text'] = timeTaken
+
+    start_decode_text = time.perf_counter()
     text = decode_text(code, coding)
+    finish_decode_text = time.perf_counter()
+    timeTaken = finish_decode_text - start_decode_text
+    timerData['Decode Text'] = timeTaken
+
+    finish_start_overall = time.perf_counter()
+    timeTaken = finish_start_overall - start_overall
+    timerData['Overall'] = timeTaken
+    print(timerData)
+
     print('original matches decoded text:', original == text and len(original) == len(text))
     print('compression ratio in bits is ', len(code), '/', 8 * len(original), '=', len(code) / (8 * len(original)))
     return
